@@ -41,5 +41,8 @@ For this project, we are going to use:
 The  processing type used is batch processing with a full load approach through a truncate-and-insert method. 
 Since this project does not handle large-scale databases, a Slowly Changing Dimension Type 1 (SCD 1) overwrite strategy is enough.
 
+## Data Architechture
+The project follows a Medallion Architecture approach using Bronze, Silver, and Gold layers to organize raw, cleansed, and business-ready data throughout the ETL pipeline.
+
 
 
