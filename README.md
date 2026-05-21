@@ -44,5 +44,16 @@ Since this project does not handle large-scale databases, a Slowly Changing Dime
 ## Data Architechture
 The project follows a Medallion Architecture approach using Bronze, Silver, and Gold layers to organize raw, cleansed, and business-ready data throughout the ETL pipeline.
 
+## License
 
+This project is licensed under the MIT License.  
+You are free to use, modify, and distribute this project with proper attribution.
+
+See the `LICENSE.md` file for more details.
+
+## About the Author
+
+Developed by Frida Elizabeth Carbajal Ordóñez.
+
+Actuarial science graduate with an interest in data science, analytics, and data engineering. Passionate about transforming raw data into meaningful insights through SQL, Python, and data visualization.
 
