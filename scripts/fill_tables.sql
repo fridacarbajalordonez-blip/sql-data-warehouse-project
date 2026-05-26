@@ -1,4 +1,5 @@
 
+
 /*
 -*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*-
 CREATES AN STORED PROCEDURE FOR LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV FILES 
@@ -8,7 +9,7 @@ CREATES AN STORED PROCEDURE FOR LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV 
 CREATE OR ALTER PROCEDURE bronze.load_bronze as
 	BEGIN
 	BEGIN TRY
-
+	DECLARE @startdate DATETIME, @enddate DATETIME
 		PRINT('======================================================================')
 		PRINT('LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV FILES')
 		PRINT('======================================================================')
@@ -18,8 +19,12 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		PRINT('----------------------------------------------------------------------')
 
 
-	
+		
 		PRINT('>>>>>Tuncating and inserting data into tables:')
+
+
+		--------------------------------------------------------------  bronze.crm_cust_info
+		SET @startdate = GETDATE();
 		PRINT( 'TABLE: bronze.crm_cust_info')
 		TRUNCATE TABLE bronze.crm_cust_info;
 		BULK INSERT bronze.crm_cust_info
@@ -29,8 +34,14 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK--Block the table during the bulk insert operation for improved performance
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.crm_cust_info: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
 
+
+
+		--------------------------------------------------------------  bronze.crm_prd_info
+		SET @startdate = GETDATE();
 		PRINT( 'TABLE: bronze.crm_prd_info')
 		TRUNCATE TABLE bronze.crm_prd_info;
 		BULK INSERT bronze.crm_prd_info
@@ -40,8 +51,14 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.crm_prd_info: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
 
+
+
+		--------------------------------------------------------------  bronze.crm_sales_details
+		SET @startdate = GETDATE();
 		PRINT( 'TABLE: bronze.crm_sales_details')
 		TRUNCATE TABLE bronze.crm_sales_details;
 		BULK INSERT bronze.crm_sales_details
@@ -51,13 +68,21 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.crm_sales_details: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
-	
+	 
+
+
 		PRINT('----------------------------------------------------------------------')
 		PRINT('Loading ERP tables')
 		PRINT('----------------------------------------------------------------------')
-
 		PRINT('>>>>>Tuncating and inserting data into tables:')
+
+
+
+		--------------------------------------------------------------  bronze.erp_cust_az12
+		SET @startdate = GETDATE();
 		PRINT( 'TABLE: bronze.erp_cust_az12')
 		TRUNCATE TABLE bronze.erp_cust_az12;
 		BULK INSERT bronze.erp_cust_az12
@@ -67,8 +92,13 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.erp_cust_az12: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
 
+
+		--------------------------------------------------------------  bronze.erp_cust_az12
+		SET @startdate = GETDATE();
 		PRINT('TABLE: bronze.erp_loc_a101')
 		TRUNCATE TABLE bronze.erp_loc_a101;
 		BULK INSERT bronze.erp_loc_a101
@@ -78,8 +108,13 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.erp_loc_a101: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
 
+
+		--------------------------------------------------------------  bronze.erp_px_cat_g1v2
+		SET @startdate = GETDATE();
 		PRINT('TABLE: bronze.erp_px_cat_g1v2')
 		TRUNCATE TABLE bronze.erp_px_cat_g1v2;
 		BULK INSERT bronze.erp_px_cat_g1v2
@@ -89,9 +124,14 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 			FIELDTERMINATOR = ',',
 			TABLOCK
 		);
+		SET @enddate = GETDATE();
+		PRINT('Time taken to load bronze.erp_px_cat_g1v2: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
+
 	END TRY
 	BEGIN CATCH
 		PRINT('An error occurred while loading data into bronze tables: ' + ERROR_MESSAGE());
 	END CATCH
 	END
 
+
+EXEC bronze.load_bronze;
