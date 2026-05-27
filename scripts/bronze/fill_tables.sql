@@ -1,11 +1,22 @@
 
 
-/*
--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*-
-CREATES AN STORED PROCEDURE FOR LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV FILES 
--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*-
-*/
 
+/*
+-*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+CREATES AN STORED PROCEDURE FOR LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV FILES 
+-*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
+
+SCRIPT PURPOSE:
+This script creates a stored procedure named 'load_bronze' in the 'bronze' schema. 
+* Designed to load data into the bronze schema tables from specified CSV files. 
+* Truncates the tables before loading new data.
+* It uses the BULK INSERT command to efficiently load data and includes error handling to catch any issues that may arise during the loading process.
+* Calculates the execution time for loading each table and the total duration for the entire loading process, printing these metrics to the console.
+
+For execution run the following command after creating the procedure:
+EXEC bronze.load_bronze
+
+*/
 CREATE OR ALTER PROCEDURE bronze.load_bronze as
 	BEGIN
 	BEGIN TRY
