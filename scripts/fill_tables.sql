@@ -9,7 +9,8 @@ CREATES AN STORED PROCEDURE FOR LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV 
 CREATE OR ALTER PROCEDURE bronze.load_bronze as
 	BEGIN
 	BEGIN TRY
-	DECLARE @startdate DATETIME, @enddate DATETIME
+	DECLARE @startdate DATETIME, @enddate DATETIME, @starttime DATETIME, @endtime DATETIME;
+		SET @starttime = GETDATE();
 		PRINT('======================================================================')
 		PRINT('LOADING DATA INTO BRONZE SCHEMA TABLES FROM CSV FILES')
 		PRINT('======================================================================')
@@ -18,9 +19,7 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		PRINT('Loading CRM tables')
 		PRINT('----------------------------------------------------------------------')
 
-
-		
-		PRINT('>>>>>Tuncating and inserting data into tables:')
+		PRINT('>>>>>Truncating and inserting data into tables:')
 
 
 		--------------------------------------------------------------  bronze.crm_cust_info
@@ -39,7 +38,6 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		PRINT(' ')
 
 
-
 		--------------------------------------------------------------  bronze.crm_prd_info
 		SET @startdate = GETDATE();
 		PRINT( 'TABLE: bronze.crm_prd_info')
@@ -54,7 +52,6 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		SET @enddate = GETDATE();
 		PRINT('Time taken to load bronze.crm_prd_info: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 		PRINT(' ')
-
 
 
 		--------------------------------------------------------------  bronze.crm_sales_details
@@ -77,8 +74,7 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		PRINT('----------------------------------------------------------------------')
 		PRINT('Loading ERP tables')
 		PRINT('----------------------------------------------------------------------')
-		PRINT('>>>>>Tuncating and inserting data into tables:')
-
+		PRINT('>>>>>Truncating and inserting data into tables:')
 
 
 		--------------------------------------------------------------  bronze.erp_cust_az12
@@ -97,7 +93,7 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		PRINT(' ')
 
 
-		--------------------------------------------------------------  bronze.erp_cust_az12
+		--------------------------------------------------------------  bronze.erp_cust_a101
 		SET @startdate = GETDATE();
 		PRINT('TABLE: bronze.erp_loc_a101')
 		TRUNCATE TABLE bronze.erp_loc_a101;
@@ -127,11 +123,17 @@ CREATE OR ALTER PROCEDURE bronze.load_bronze as
 		SET @enddate = GETDATE();
 		PRINT('Time taken to load bronze.erp_px_cat_g1v2: ' + CAST(DATEDIFF(SECOND, @startdate, @enddate) AS NVARCHAR(20)) + ' seconds')
 
+
+		SET @endtime = GETDATE();
+		PRINT('======================================================================')
+		PRINT('Finished loading data into Bronze Layer')
+		PRINT('TOTAL LOAD DURATION:' + CAST(DATEDIFF(SECOND, @starttime, @endtime) AS NVARCHAR(20)) + ' seconds')
+		PRINT('======================================================================')
+
+
 	END TRY
+
 	BEGIN CATCH
 		PRINT('An error occurred while loading data into bronze tables: ' + ERROR_MESSAGE());
 	END CATCH
 	END
-
-
-EXEC bronze.load_bronze;
