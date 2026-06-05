@@ -23,11 +23,12 @@ cid,
 cntr
 )
 SELECT 
-REPLACE(cid, '-','') cid,
+REPLACE(cid, '-','') cid,-- Removing dashes from cid to standardize the format
 CASE WHEN TRIM(cntr)= ('DE') THEN 'Germany'
 	 WHEN TRIM(cntr) IN ('US', 'USA') THEN 'United States'
 	 WHEN TRIM(cntr)= '' OR cntr IS NULL THEN 'n/a'
 	 ELSE TRIM(cntr)
-END cntr
+END cntr -- Standardizing country names and handling missing values
 FROM bronze.erp_loc_a101
 
+select * from silver.erp_loc_a101
