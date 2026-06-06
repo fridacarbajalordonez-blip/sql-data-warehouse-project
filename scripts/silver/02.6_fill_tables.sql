@@ -15,7 +15,7 @@ So we can proceed with the data load to silver layer without any transformation 
 SELECT *
 FROM bronze.erp_px_cat_g1v2
 
--- Checking for duplicates on cat and subcat Value LIST
+-- Checking for duplicates on cat and subcat Value LIST.
 -- We found 4 types of cat values that are well defined.
 SELECT DISTINCT cat
 FROM bronze.erp_px_cat_g1v2
@@ -29,6 +29,14 @@ FROM bronze.erp_px_cat_g1v2
 SELECT *
 FROM bronze.erp_px_cat_g1v2
 WHERE maintenance NOT IN ('Yes', 'No') OR maintenance IS NULL
+
+  
+-- Checking for unwanted spaces on cat, subcat and maintenance columns. 
+--We found no unwanted spaces on cat, subcat and maintenance columns.
+SELECT *
+FROM bronze.erp_px_cat_g1v2
+WHERE cat!= TRIM(cat) OR subcat != TRIM(subcat) OR maintenance != TRIM(maintenance)	
+
 
 --Everything looks good on the source table. We can proceed with the data load to silver layer.
 
