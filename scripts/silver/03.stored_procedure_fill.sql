@@ -238,7 +238,10 @@ BEGIN
 
 	END TRY
 	BEGIN CATCH
-		PRINT 'An error occurred while loading data into silver tables: ' + ERROR_MESSAGE()
+	PRINT('======================================================================')
+	PRINT('Error occurred while loading data into silver tables')
+	PRINT('Error Message:'+ ERROR_MESSAGE())
+	PRINT('======================================================================')
 	END CATCH
 END
 
