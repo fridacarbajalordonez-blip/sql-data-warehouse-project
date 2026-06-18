@@ -26,6 +26,10 @@ through surrogate keys, enabling efficient analytical queries and reporting.
 */
 
 -------------------------------- CREATION OF DIMENSION TABLE: CUSTOMERS --------------------------------------
+--Drop view if exists
+IF OBJECT_ID('gold.dim_customers', 'V') IS NOT NULL
+    DROP VIEW gold.dim_customers;
+GO
 CREATE VIEW gold.dim_customers AS
 --Gathering all customers information into one single table
 SELECT 
@@ -52,6 +56,10 @@ LEFT JOIN silver.erp_loc_a101 la
 
 ------------------------------- CREATION OF DIMENSION TABLE: PRODUCTS ------------------------------------
 
+	--Drop view if exists
+IF OBJECT_ID('gold.dim_products', 'V') IS NOT NULL
+    DROP VIEW gold.dim_products;
+GO
 CREATE VIEW gold.dim_products AS
 	--Gathering all products information into one single table
 SELECT
@@ -73,7 +81,11 @@ WHERE pn.prd_end_dt IS NULL
 
 
 ------------------------------------ CREATION OF FACT TABLE: SALES -------------------------------------
-	
+
+	--Drops view if exists  
+	IF OBJECT_ID('gold.fact_sales', 'V') IS NOT NULL
+    DROP VIEW gold.fact_sales;
+GO
 CREATE VIEW gold.fact_sales AS
 	--Gathering sales information into one single table conecting by customers and product surrogated keys 
 SELECT 
@@ -83,12 +95,11 @@ cu.customer_key, --Surrogate key from Customers dimension table
 sd.sls_order_dt AS order_date,
 sd.sls_ship_dt AS ship_date, 
 sd.sls_due_dt AS due_date,
-sd.sls_sales AS sales_amount,
-sd.sls_price AS price
+sd.sls_price AS price,
+sd.sls_quantity AS quantity, 
+sd.sls_sales AS sales_amount
 FROM silver.crm_sales_details sd
 LEFT JOIN gold.dim_products pr
 ON sd.sls_prd_key = pr.product_number
 LEFT JOIN gold.dim_customers cu
 ON sd.sls_cust_id = cu.customer_id
-
-
