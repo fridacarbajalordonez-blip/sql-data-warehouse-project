@@ -14,14 +14,14 @@ The information for both dimension and fact tables are explained below given by 
 |-----------------|---------------|-------------------------------------------------------------------------------|
 | customer_key    | BIGINT        | Surrogate generated key created for each customer record in the dimension table.|
 | customer_id     | INT           | Unique numerical identification number assigned to each customer.             |
-| customer_number | NVARCHAR(50)  | Alphanumerical identifier representing the customer, used for tracking and referencing. |
+| customer_serie | NVARCHAR(50)  | Alphanumerical identifier representing the customer, used for tracking and referencing. |
 | first_name      | NVARCHAR(50)  | Customer's first name given in the source data.                               |
 | last_name       | NVARCHAR(50)  | Customer's last name given in the source data.                                |
 | country         | NVARCHAR(50)  | Residence country of each customer.                                           |
 | marital_status  | NVARCHAR(50)  | Marital status of the customer (Married, Single).                             |
 | gender          | NVARCHAR(50)  | Customer gender ('Male', 'Female', 'n/a').                                    |
-| birthdate       | DATE          | Customer's date of birth in YYYY-MM-DD format.                                |
-| create_date     | DATE          | Date when the customer record was created in the system.                      |
+| birth_date      | DATE          | Customer's date of birth in YYYY-MM-DD format.                                |
+| dwh_create_date  | DATE          | Date when the customer record was created in the system.                      |
 
 ## 2. gold.dim_products
 
