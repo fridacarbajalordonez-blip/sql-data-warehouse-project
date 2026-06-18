@@ -29,13 +29,14 @@ CREATE TABLE silver.crm_prd_info (
 	prd_id INT,
 	prd_key NVARCHAR(50),
 	prd_nm NVARCHAR(50),
-	prd_cost INT,
+	prd_cost DECIMAL(18,2),
 	prd_line NVARCHAR(50),
 	prd_start_dt DATETIME,
 	prd_end_dt DATETIME,
 	dwh_create_date DATETIME2 DEFAULT GETDATE()
 
 );
+
 
 IF OBJECT_ID('silver.crm_sales_details', 'U') IS NOT NULL
 	DROP TABLE silver.crm_sales_details;
@@ -46,9 +47,9 @@ CREATE TABLE silver.crm_sales_details (
 	sls_order_dt INT,
 	sls_ship_dt INT,
 	sls_due_dt INT,
-	sls_sales INT,
+	sls_sales DECIMAL(18,2),
 	sls_quantity INT, 
-	sls_price INT,
+	sls_price DECIMAL(18,2),
 	dwh_create_date DATETIME2 DEFAULT GETDATE()
 
 );
