@@ -1,3 +1,4 @@
+
 /*
 -*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*-*-*-*-*-*--*-*
 							CUSTOMERS EXPLORATION 
@@ -19,126 +20,142 @@ purchasing patterns, and their contribution to overall business performance.
 ===============================================================================
 */
 
--- Order per customers 
--- TOP 5 CUSTOMERS:
--- 1. Ashley Henderson 
--- 2. Fernando Barnes
--- 3. Charles Jackson
--- 4. Jennifer Simmons
--- 5. Henry Garcia
-
-SELECT TOP 5
-sls.customer_key,
-ctm.first_name,
-ctm.last_name,
-COUNT(*) AS order_per_customer
-FROM gold.fact_sales sls
-LEFT JOIN gold.dim_customers ctm
- ON sls.customer_key = ctm.customer_key
-GROUP BY sls.customer_key, ctm.first_name,ctm.last_name
-ORDER BY order_per_customer DESC;
-
-
--- Average orders per customers: 3.27
-SELECT 
-ROUND(AVG(CAST(order_per_customer AS DECIMAL(4,1))),2) AS average_order
-FROM (
-SELECT 
-sls.customer_key,
-ctm.first_name,
-ctm.last_name,
-COUNT(*) AS order_per_customer
-FROM gold.fact_sales sls
-LEFT JOIN gold.dim_customers ctm
- ON sls.customer_key = ctm.customer_key
-GROUP BY sls.customer_key, ctm.first_name,ctm.last_name
-)t;
-
--- Revenue per customers 
--- TOP 5 CUSTOMERS:
--- 1. Nichole Nara
--- 2. Kaitlyn Henderson
--- 3. Margaret He
--- 4. Randall Domimguez
--- 5. Adriana Gonzalez 
-SELECT TOP 5
-    sls.customer_key,
-    ctm.first_name,
-    ctm.last_name,
-    SUM(sales_amount) AS sales_per_customer
-FROM gold.fact_sales sls
-LEFT JOIN gold.dim_customers ctm
- ON sls.customer_key = ctm.customer_key
-GROUP BY sls.customer_key, ctm.first_name,ctm.last_name
-ORDER BY sales_per_customer DESC;
-
-
---Average sales per customer: 1,588.20
-SELECT 
-ROUND(AVG(sales_per_customer),2) AS average_order
-FROM (
+-- Defining a View table for joining sales to customers
+IF OBJECT_ID('gold.report_customers_revenue','V') IS NOT NULL
+    DROP VIEW gold.report_customers_revenue;
+GO
+CREATE VIEW gold.report_customers_revenue AS
 SELECT
     sls.customer_key,
     ctm.first_name,
     ctm.last_name,
-SUM(sales_amount) AS sales_per_customer
+    COUNT(DISTINCT order_number) AS total_orders,
+    SUM(sales_amount) AS total_sales,
+    SUM(quantity) AS total_quantity,
+    MIN(order_date) AS first_order,
+    MAX(order_date) AS last_order
 FROM gold.fact_sales sls
-LEFT JOIN gold.dim_customers ctm
- ON sls.customer_key = ctm.customer_key
-GROUP BY sls.customer_key, ctm.first_name,ctm.last_name
-)t;
+JOIN gold.dim_customers ctm
+    ON sls.customer_key = ctm.customer_key
+GROUP BY
+    sls.customer_key,
+    ctm.first_name,
+    ctm.last_name;
+   
 
+---------------------------------------------------------------------------------
+-- Order per customers
+SELECT TOP 5 *
+FROM gold.report_customers_revenue
+ORDER BY total_orders DESC
+-- TOP 5 CUSTOMERS BY ORDERS:
+-- 1. Dalton Pérez
+-- 2. Mason Roberts
+-- 3. Ashley Henderson 
+-- 4. Jason Griffin
+-- 5. Hailey Patterson
 
+---------------------------------------------------------------------------------
+-- Revenue
+SELECT
+ROUND(AVG(total_sales),2) AS average_revenue
+FROM gold.report_customers_revenue
+-- Average revenue per customers: 1,588.20
+
+---------------------------------------------------------------------------------
+-- Revenue per customers 
+SELECT TOP 5 *
+FROM gold.report_customers_revenue
+ORDER BY total_sales DESC
+-- TOP 5 CUSTOMERS:
+-- 1. Kaitlyn Henderson
+-- 2. Nichole Nara
+-- 3. Margaret He
+-- 4. Randall Domimguez
+-- 5. Adriana Gonzalez 
+
+---------------------------------------------------------------------------------
 -- Sales by country 
--- Top 3: USA, Australia and Canada
 SELECT 
     country,
-    COUNT(*) AS sales_per_country
+    SUM(sales_amount) AS revenue_per_country
 FROM gold.fact_sales sls
 LEFT JOIN gold.dim_customers ctm
 ON sls.customer_key = ctm.customer_key
 GROUP BY country
-ORDER BY sales_per_country DESC;
+ORDER BY revenue_per_country DESC
+-- Top 3: USA, Australia and UK
 
-
-
+---------------------------------------------------------------------------------
 -- Sales by Marital Status 
--- Married customers buy more than Single customers.
 SELECT 
     marital_status,
-    COUNT(*) as sales_per_marital_status
+    SUM(sales_amount) as sales_per_marital_status
 FROM gold.fact_sales sls
 LEFT JOIN gold.dim_customers ctm
 ON sls.customer_key = ctm.customer_key
 GROUP BY marital_status
-ORDER BY sales_per_marital_status DESC;
+ORDER BY sales_per_marital_status DESC
+-- Married customers buy more than Single customers.
 
-
-
+---------------------------------------------------------------------------------
 -- Sales by gender
--- Female: 30,004
--- Male: 30,361 
-SELECT TOP 2
+SELECT 
     gender,
-    COUNT(*) AS sales_per_gender
+    SUM(sales_amount) AS sales_per_gender
 FROM gold.fact_sales sls
 LEFT JOIN gold.dim_customers ctm
 ON sls.customer_key = ctm.customer_key
 GROUP BY gender
-ORDER BY sales_per_gender DESC;
+ORDER BY sales_per_gender DESC
+-- Female: 30,004
+-- Male: 30,361 
 
+---------------------------------------------------------------------------------
 -- Sales by age
--- Top 5 ages: 51, 52, 47, 45, 46
 WITH customer_age AS (
     SELECT
-        DATEDIFF(YEAR, ctm.birth_date, GETDATE()) AS age
+        DATEDIFF(YEAR, ctm.birth_date, sls.order_date) AS age,
+        sls.sales_amount
     FROM gold.fact_sales sls
     LEFT JOIN gold.dim_customers ctm
         ON sls.customer_key = ctm.customer_key
+),
+age_groups AS (
+    SELECT
+        CASE
+            WHEN age < 30 THEN '18-29'
+            WHEN age < 40 THEN '30-39'
+            WHEN age < 50 THEN '40-49'
+            WHEN age < 60 THEN '50-59'
+            ELSE '60+'
+        END AS age_group,
+        sales_amount
+    FROM customer_age
 )
-SELECT TOP 5
-    age,
-    COUNT(*) AS sales_per_age
-FROM customer_age
-GROUP BY age
+SELECT
+    age_group,
+    SUM(sales_amount) AS sales_per_age
+FROM age_groups
+GROUP BY age_group
 ORDER BY sales_per_age DESC;
+-- Customers on their 30s are the main buyers
+
+
+/*
+CONCLUSIONS
+
+1. Average customer revenue is 1,588.20.
+
+2. USA, Australia and UK generate the highest revenue.
+
+3. Married customers generate more total revenue than single customers.
+
+4. Revenue distribution between male and female customers is relatively balanced.
+
+5. Customers aged 30–39 contribute the highest share of revenue.
+
+These findings provide a high-level understanding of customer demographics
+and purchasing behavior and can serve as a foundation for deeper analysis
+through Power BI dashboards and customer segmentation.
+*/
