@@ -70,7 +70,7 @@ pn.prd_nm AS product_name,
 pn.cat_id AS category_id,
 pc.cat AS category,
 pc.subcat AS subcategory,
-pc.maintenance AS maintenanca,
+pc.maintenance AS maintenance,
 pn.prd_cost AS product_cost,
 pn.prd_line AS product_line, 
 pn.prd_start_dt AS start_date
