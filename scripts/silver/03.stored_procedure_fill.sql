@@ -227,6 +227,21 @@ BEGIN
 		subcat,
 		maintenance
 		FROM bronze.erp_px_cat_g1v2
+		-- From table prd_info we found that Category 'CO_PE' doesn´t exist on data source PX_CAT_G1V2, then we add this register manually to our category catalog. 
+		INSERT INTO silver.erp_px_cat_g1v2
+			(id, cat, subcat, maintenance)
+			SELECT
+			    'CO_PE',
+			    'Components',
+			    'Pedals',
+			    'Yes'
+			WHERE NOT EXISTS (
+			    SELECT 1
+			    FROM silver.erp_px_cat_g1v2
+			    WHERE id = 'CO_PE'
+			); 
+
+
 		SET @endtime = GETDATE();
 		PRINT('Time taken to load silver.erp_px_cat_g1v2: ' + CAST(DATEDIFF(SECOND, @starttime, @endtime) AS NVARCHAR(20)) + ' seconds')
 		
