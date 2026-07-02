@@ -24,23 +24,23 @@ purchasing patterns, and their contribution to overall business performance.
 IF OBJECT_ID('gold.report_customers_revenue','V') IS NOT NULL
     DROP VIEW gold.report_customers_revenue;
 GO
-CREATE VIEW gold.report_customers_revenue AS
-SELECT
-    sls.customer_key,
-    ctm.first_name,
-    ctm.last_name,
-    COUNT(DISTINCT order_number) AS total_orders,
-    SUM(sales_amount) AS total_sales,
-    SUM(quantity) AS total_quantity,
-    MIN(order_date) AS first_order,
-    MAX(order_date) AS last_order
-FROM gold.fact_sales sls
-JOIN gold.dim_customers ctm
-    ON sls.customer_key = ctm.customer_key
-GROUP BY
-    sls.customer_key,
-    ctm.first_name,
-    ctm.last_name;
+	CREATE VIEW gold.report_customers_revenue AS
+	SELECT
+	    sls.customer_key,
+	    ctm.first_name,
+	    ctm.last_name,
+	    COUNT(DISTINCT order_number) AS total_orders,
+	    SUM(sales_amount) AS total_sales,
+	    SUM(quantity) AS total_quantity,
+	    MIN(order_date) AS first_order,
+	    MAX(order_date) AS last_order
+	FROM gold.fact_sales sls
+	JOIN gold.dim_customers ctm
+	    ON sls.customer_key = ctm.customer_key
+	GROUP BY
+	    sls.customer_key,
+	    ctm.first_name,
+	    ctm.last_name;
    
 
 ---------------------------------------------------------------------------------
