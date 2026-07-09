@@ -81,6 +81,11 @@ ORDER BY
 -- Month Over Month Growth (MoM Growth)
 -- To avoid distortion caused by the partial datasets in 2010 and 2014,
 -- the MoM analysis includes only complete years (2011–2013).
+-- Created a View for using  it on Power BI
+IF OBJECT_ID('gold.report_mom_growth','V') IS NOT NULL
+       DROP VIEW gold.report_mom_growth;
+GO
+    CREATE VIEW gold.report_mom_growth AS
 SELECT 
     year,
     month, 
@@ -100,7 +105,6 @@ GROUP BY
     YEAR(order_date),
     MONTH(order_date)
 )t
-ORDER BY MOM DESC
 
 
 -- Quarterly Revenue
