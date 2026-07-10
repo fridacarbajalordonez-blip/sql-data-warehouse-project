@@ -36,7 +36,7 @@ FROM gold.fact_sales
 
 -- Time period of the orders
 -- From December 29th,2010
--- To Januaty 28th, 2014
+-- To January 28th, 2014
 SELECT
     MIN(order_date) AS first_order,
     MAX(order_date) AS last_order
