@@ -4,7 +4,7 @@ This project demonstrates an end-to-end Business Intelligence workflow, transfor
 
 Starting from six raw datasets, the project builds a SQL Server data warehouse following the Medallion Architecture (Bronze, Silver, and Gold layers), applies ETL processes and data quality transformations, develops analytical SQL views, and delivers an interactive Power BI dashboard for business reporting.
 
-The project showcases practical skills in:
+The project demonstrates practical experience in:
 
 - SQL Development
 - ETL Design
